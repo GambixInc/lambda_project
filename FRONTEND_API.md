@@ -269,7 +269,9 @@ For full functionality, include all available scraped data fields as specified i
 
 ## CORS
 
-The API is configured to allow cross-origin requests from any domain. No additional CORS configuration is needed on the frontend.
+The API is configured to allow cross-origin requests from any domain. The Lambda function handles CORS preflight requests automatically, so no additional CORS configuration is needed on the frontend.
+
+**Note:** If you encounter CORS errors, make sure you've deployed the latest version of the Lambda function that includes proper CORS handling.
 
 ## Testing
 

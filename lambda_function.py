@@ -20,8 +20,9 @@ def create_response(data, status_code=200, is_api_gateway=False):
             'headers': {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS'
+                'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With,Accept,Origin',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Max-Age': '86400'
             },
             'body': json.dumps(data)
         }
@@ -135,6 +136,20 @@ def lambda_handler(event, context):
     try:
         # Parse the event - can be direct invocation or from other AWS services
         is_api_gateway = isinstance(event, dict) and 'body' in event
+        
+        # Handle CORS preflight OPTIONS request
+        if is_api_gateway and event.get('httpMethod') == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With,Accept,Origin',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                    'Access-Control-Max-Age': '86400'
+                },
+                'body': ''
+            }
         
         if is_api_gateway:
             # API Gateway event format
